@@ -60,7 +60,7 @@ export default function Contact() {
                 </div>
                 <div>
                   <h4 className="font-bold mb-1">Email</h4>
-                  <a href="mailto:hello@solvingtech.id" className="text-on-surface-variant text-sm hover:text-primary-brand transition-colors">{t('contact.email')}</a>
+                  <a href="mailto:hi@solvingtech.id" className="text-on-surface-variant text-sm hover:text-primary-brand transition-colors">{t('contact.email')}</a>
                 </div>
               </div>
               <div className="flex gap-4 cursor-pointer group" onClick={handleWA}>
@@ -89,7 +89,7 @@ export default function Contact() {
 
           <div className="rounded-[2rem] overflow-hidden h-64 airy-shadow border border-slate-100">
             <iframe 
-              src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d15861.92160352516!2d107.2882522!3d-6.3317778!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e6977bd08c3395b%3A0xe54d6935cc259695!2sGaluh%20Mas%20Karawang!5e0!3m2!1sid!2sid!4v1714830000000!5m2!1sid!2sid" 
+               src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3966.702!2d106.772!3d-6.175!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x2e69f6fe00000001%3A0x0!2sDuri%20Kepa!5e0!3m2!1sid!2sid!4v1714830000000!5m2!1sid!2sid"
               width="100%" 
               height="100%" 
               style={{ border: 0 }} 

@@ -8,6 +8,10 @@ import Layout from './components/Layout';
 import Home from './pages/Home';
 import About from './pages/About';
 import Services from './pages/Services';
+import WebDevelopment from './pages/services/WebDevelopment';
+import MobileDevelopment from './pages/services/MobileDevelopment';
+import UIDesign from './pages/services/UIDesign';
+import BrandingDesign from './pages/services/BrandingDesign';
 import Portfolio from './pages/Portfolio';
 import Blog from './pages/Blog';
 import Careers from './pages/Careers';
@@ -26,6 +30,10 @@ export default function App() {
               <Route path="/" element={<Home />} />
               <Route path="/about" element={<About />} />
               <Route path="/services" element={<Services />} />
+              <Route path="/services/web-development" element={<WebDevelopment />} />
+              <Route path="/services/mobile-development" element={<MobileDevelopment />} />
+              <Route path="/services/ui-ux-design" element={<UIDesign />} />
+              <Route path="/services/branding-design" element={<BrandingDesign />} />
               <Route path="/portfolio" element={<Portfolio />} />
               <Route path="/blog" element={<Blog />} />
               <Route path="/careers" element={<Careers />} />

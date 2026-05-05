@@ -1,6 +1,6 @@
 import { Link, useLocation } from 'react-router-dom';
 import { Terminal, Globe, Mail, Share2, Menu, X, ChevronDown, Languages, Instagram, Linkedin, MessageCircle } from 'lucide-react';
-import { useState, useEffect, useRef } from 'react';
+import { useState, useEffect, useRef, ReactNode } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useLanguage } from '../LanguageContext';
 
@@ -8,6 +8,7 @@ const Navbar = () => {
   const [isOpen, setIsOpen] = useState(false);
   const [scrolled, setScrolled] = useState(false);
   const [isServicesOpen, setIsServicesOpen] = useState(false);
+  const [isMobileServicesOpen, setIsMobileServicesOpen] = useState(false);
   const dropdownRef = useRef<HTMLDivElement>(null);
   const location = useLocation();
   const { language, setLanguage, t } = useLanguage();
@@ -33,12 +34,12 @@ const Navbar = () => {
     { name: t('nav.about'), path: '/about' },
     { 
       name: t('nav.services'), 
-      path: '#', 
+      path: '/services', 
       dropdown: [
-        { name: t('services.web'), path: '/services#web' },
-        { name: t('services.mobile'), path: '/services#mobile' },
-        { name: t('services.product'), path: '/services#product' },
-        { name: t('services.graphic'), path: '/services#graphic' },
+        { name: t('services.web'), path: '/services/web-development' },
+        { name: t('services.mobile'), path: '/services/mobile-development' },
+        { name: t('services.product'), path: '/services/ui-ux-design' },
+        { name: t('services.graphic'), path: '/services/branding-design' },
       ]
     },
     { name: t('nav.portfolio'), path: '/portfolio' },
@@ -59,14 +60,26 @@ const Navbar = () => {
       <div className="max-w-7xl mx-auto px-6 flex items-center justify-between">
         <Link to="/" className="flex items-center gap-3 active:scale-95 transition-transform group">
           <div className="flex items-center gap-3">
-            <div className="relative w-10 h-10">
-              {/* Stylized Logo Symbol inspired by the image */}
-              <div className="absolute inset-0 bg-primary-brand rounded-lg transform -skew-x-12 translate-x-1 -translate-y-1 opacity-20" />
-              <div className="absolute inset-0 bg-primary-brand rounded-lg transform -skew-x-12 flex items-center justify-center">
-                <span className="text-white font-black text-2xl italic tracking-tighter leading-none pr-1">S</span>
+            <motion.div 
+              whileHover={{ rotate: [-3, 3, -3, 0], scale: 1.05 }}
+              className="relative flex items-center gap-2"
+            >
+              <div className="h-10 w-10 bg-primary-brand rounded-xl flex items-center justify-center text-white shadow-lg shadow-primary-brand/20">
+                <Terminal size={24} strokeWidth={3} />
               </div>
-            </div>
-            <span className="text-2xl font-black tracking-tighter text-primary-brand hidden sm:block">SolvingTech</span>
+              <span className="text-2xl font-black tracking-tighter text-slate-900">
+                Solving<span className="text-primary-brand">Tech</span>
+              </span>
+              
+              <motion.div 
+                animate={{ 
+                  opacity: [0, 0.4, 0],
+                  scale: [1, 1.1, 1],
+                }}
+                transition={{ duration: 3, repeat: Infinity, ease: "easeInOut" }}
+                className="absolute inset-0 bg-primary-brand/10 rounded-full -z-10 blur-2xl"
+              />
+            </motion.div>
           </div>
         </Link>
 
@@ -134,16 +147,19 @@ const Navbar = () => {
         <div className="flex items-center gap-4">
           <button 
             onClick={handleLanguageChange}
-            className="hidden md:flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container text-on-surface text-xs font-semibold transition-all hover:bg-surface-container-high cursor-pointer"
+            className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-slate-100 text-slate-700 text-xs font-bold transition-all hover:bg-slate-200 cursor-pointer active:scale-95"
           >
             <Languages size={14} />
-            {language === 'id' ? 'Indonesia' : 'English'}
+            <span className="hidden xs:inline">{language === 'id' ? 'IDN' : 'ENG'}</span>
+            <span className="xs:hidden">{language === 'id' ? 'ID' : 'EN'}</span>
           </button>
+          
           <Link to="/contact" className="hidden md:block bg-primary-brand text-white px-6 py-2.5 rounded-lg font-semibold text-sm hover:shadow-lg transition-all active:scale-95 cursor-pointer">
             {t('nav.contact')}
           </Link>
+          
           <button 
-            className="md:hidden p-2 text-on-surface"
+            className="md:hidden p-2 text-slate-900 bg-slate-100 rounded-lg active:scale-95 transition-transform"
             onClick={() => setIsOpen(!isOpen)}
           >
             {isOpen ? <X size={24} /> : <Menu size={24} />}
@@ -158,34 +174,53 @@ const Navbar = () => {
             initial={{ opacity: 0, height: 0 }}
             animate={{ opacity: 1, height: 'auto' }}
             exit={{ opacity: 0, height: 0 }}
-            className="md:hidden bg-white border-b border-slate-100 overflow-hidden"
+            className="md:hidden bg-white border-b border-slate-100 overflow-hidden shadow-2xl"
           >
-            <div className="flex flex-col p-6 gap-4 font-display font-medium">
+            <div className="flex flex-col p-6 gap-2 font-display font-medium">
               {navLinks.map((link) => (
                 <div key={link.path}>
                   {link.dropdown ? (
-                    <div className="space-y-3">
-                      <p className="text-sm font-bold text-slate-400 uppercase tracking-widest">{link.name}</p>
-                      <div className="pl-4 flex flex-col gap-3">
-                        {link.dropdown.map((subItem) => (
-                          <Link
-                            key={subItem.path}
-                            to={subItem.path}
-                            onClick={() => setIsOpen(false)}
-                            className="text-lg text-on-surface-variant"
+                    <div className="space-y-1">
+                      <button 
+                        onClick={() => setIsMobileServicesOpen(!isMobileServicesOpen)}
+                        className={`w-full flex items-center justify-between text-lg py-3 ${
+                          location.pathname.startsWith('/services') ? 'text-primary-brand font-bold' : 'text-slate-900'
+                        }`}
+                      >
+                        {link.name}
+                        <ChevronDown size={20} className={`transition-transform duration-300 ${isMobileServicesOpen ? 'rotate-180' : ''}`} />
+                      </button>
+                      <AnimatePresence>
+                        {isMobileServicesOpen && (
+                          <motion.div
+                            initial={{ opacity: 0, height: 0 }}
+                            animate={{ opacity: 1, height: 'auto' }}
+                            exit={{ opacity: 0, height: 0 }}
+                            className="overflow-hidden bg-slate-50 rounded-2xl"
                           >
-                            {subItem.name}
-                          </Link>
-                        ))}
-                      </div>
+                            <div className="p-4 flex flex-col gap-4">
+                              {link.dropdown.map((subItem) => (
+                                <Link
+                                  key={subItem.path}
+                                  to={subItem.path}
+                                  onClick={() => setIsOpen(false)}
+                                  className="text-base text-slate-500 font-medium hover:text-primary-brand transition-colors"
+                                >
+                                  {subItem.name}
+                                </Link>
+                              ))}
+                            </div>
+                          </motion.div>
+                        )}
+                      </AnimatePresence>
                     </div>
                   ) : (
                     <Link
                       key={link.path}
                       to={link.path}
                       onClick={() => setIsOpen(false)}
-                      className={`text-lg ${
-                        location.pathname === link.path ? 'text-primary-brand font-bold' : 'text-on-surface-variant'
+                      className={`block text-lg py-3 ${
+                        location.pathname === link.path ? 'text-primary-brand font-bold' : 'text-slate-900'
                       }`}
                     >
                       {link.name}
@@ -193,19 +228,11 @@ const Navbar = () => {
                   )}
                 </div>
               ))}
-              <hr className="border-slate-100" />
-              <div className="flex justify-between items-center">
-                 <button 
-                  onClick={handleLanguageChange}
-                  className="flex items-center gap-1.5 px-3 py-1.5 rounded-full bg-surface-container text-on-surface text-xs font-semibold"
-                >
-                  <Languages size={14} />
-                  {language === 'id' ? 'Indonesia' : 'English'}
-                </button>
+              <div className="pt-6">
+                <Link to="/contact" onClick={() => setIsOpen(false)} className="w-full bg-primary-brand text-white px-6 py-4 rounded-2xl font-bold text-center block shadow-lg shadow-primary-brand/20">
+                  {t('nav.contact')}
+                </Link>
               </div>
-            <Link to="/contact" onClick={() => setIsOpen(false)} className="w-full bg-primary-brand text-white px-6 py-3 rounded-lg font-semibold text-center block">
-              {t('nav.contact')}
-            </Link>
             </div>
           </motion.div>
         )}
@@ -217,70 +244,98 @@ const Navbar = () => {
 const Footer = () => {
   const { t } = useLanguage();
   return (
-    <footer className="bg-slate-50 border-t border-slate-200">
-      <div className="max-w-7xl mx-auto px-8 py-16 flex flex-col md:flex-row justify-between items-start gap-12">
-        <div className="max-w-xs">
-          <div className="flex items-center gap-2 mb-4">
-            <div className="relative w-8 h-8">
-              <div className="absolute inset-0 bg-primary-brand rounded-md transform -skew-x-12 translate-x-0.5 -translate-y-0.5 opacity-20" />
-              <div className="absolute inset-0 bg-primary-brand rounded-md transform -skew-x-12 flex items-center justify-center">
-                <span className="text-white font-black text-lg italic tracking-tighter leading-none pr-0.5">S</span>
-              </div>
+    <footer className="bg-white border-t border-slate-100 pt-24 pb-12">
+      <div className="max-w-7xl mx-auto px-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-12 mb-20">
+          <div className="lg:col-span-2">
+            <Link to="/" className="inline-block mb-10 group">
+              <motion.div 
+                whileHover={{ rotate: [-2, 2, -2, 0], scale: 1.05 }}
+                className="relative flex items-center gap-2"
+              >
+                <div className="h-12 w-12 bg-primary-brand rounded-2xl flex items-center justify-center text-white shadow-xl shadow-primary-brand/20">
+                  <Terminal size={28} strokeWidth={3} />
+                </div>
+                <span className="text-3xl font-black tracking-tighter text-slate-900">
+                  Solving<span className="text-primary-brand">Tech</span>
+                </span>
+                
+                <motion.div 
+                  animate={{ 
+                    opacity: [0, 0.3, 0],
+                    scale: [1, 1.1, 1],
+                  }}
+                  transition={{ duration: 4, repeat: Infinity, ease: "easeInOut" }}
+                  className="absolute inset-0 bg-primary-brand/10 rounded-full -z-10 blur-3xl"
+                />
+              </motion.div>
+            </Link>
+            <p className="text-slate-500 text-sm leading-relaxed max-w-sm">
+              {t('footer.about')}
+            </p>
+            <div className="flex items-center gap-4 mt-8">
+              {[
+                { icon: <Instagram size={18} />, label: 'Instagram' },
+                { icon: <Linkedin size={18} />, label: 'LinkedIn' },
+                { icon: <Mail size={18} />, label: 'Email' }
+              ].map((social, idx) => (
+                <a 
+                  key={idx}
+                  href="#" 
+                  className="w-10 h-10 rounded-full bg-slate-50 flex items-center justify-center text-slate-400 hover:bg-blue-900 hover:text-white transition-all"
+                >
+                  <span className="sr-only">{social.label}</span>
+                  {social.icon}
+                </a>
+              ))}
             </div>
-            <span className="text-xl font-black tracking-tighter text-primary-brand">SolvingTech</span>
           </div>
-          <p className="text-on-surface-variant text-sm mb-6">
-            {t('footer.about')}
-          </p>
-          <div className="flex gap-4">
-            <a href="#" className="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center text-on-surface-variant hover:text-primary-brand hover:border-primary-brand transition-all">
-              <Instagram size={18} />
-            </a>
-            <a href="#" className="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center text-on-surface-variant hover:text-primary-brand hover:border-primary-brand transition-all">
-              <Linkedin size={18} />
-            </a>
-            <a href="mailto:hello@solvingtech.id" className="w-10 h-10 rounded-full border border-slate-200 flex items-center justify-center text-on-surface-variant hover:text-primary-brand hover:border-primary-brand transition-all">
-              <Mail size={18} />
-            </a>
+
+          <div>
+            <h4 className="font-bold text-slate-900 mb-6">{t('footer.office.hq')}</h4>
+            <div className="space-y-4 text-sm text-slate-500">
+              <p className="flex gap-3">
+                <span className="font-bold text-slate-900 shrink-0">A</span>
+                <span>{t('contact.address')}</span>
+              </p>
+              <p className="flex gap-3">
+                <span className="font-bold text-slate-900 shrink-0">P</span>
+                <span>(+62) 811-1234-5678</span>
+              </p>
+              <p className="flex gap-3">
+                <span className="font-bold text-slate-900 shrink-0">E</span>
+                <span>hi@solvingtech.id</span>
+              </p>
+            </div>
+          </div>
+
+          <div>
+            <h4 className="font-bold text-slate-900 mb-6">Explore</h4>
+            <ul className="space-y-4 text-sm text-slate-500">
+              <li><Link to="/portfolio" className="hover:text-blue-900 transition-colors">{t('nav.portfolio')}</Link></li>
+              <li><Link to="/about" className="hover:text-blue-900 transition-colors">{t('nav.about')}</Link></li>
+              <li><Link to="/blog" className="hover:text-blue-900 transition-colors">{t('nav.blog')}</Link></li>
+              <li><Link to="/careers" className="hover:text-blue-900 transition-colors">{t('nav.careers')}</Link></li>
+            </ul>
           </div>
         </div>
 
-        <div className="grid grid-cols-2 sm:grid-cols-3 gap-12 md:gap-24">
-          <div>
-            <h6 className="text-sm font-bold uppercase tracking-wider mb-6 text-on-surface">{t('nav.about')}</h6>
-            <ul className="space-y-4 text-sm text-on-surface-variant">
-              <li><Link to="/about" className="hover:text-primary-brand transition-colors">{t('nav.about')}</Link></li>
-              <li><Link to="/careers" className="hover:text-primary-brand transition-colors">{t('nav.careers')}</Link></li>
-              <li><Link to="/contact" className="hover:text-primary-brand transition-colors">Contact</Link></li>
-            </ul>
-          </div>
-          <div>
-            <h6 className="text-sm font-bold uppercase tracking-wider mb-6 text-on-surface">{t('nav.services')}</h6>
-            <ul className="space-y-4 text-sm text-on-surface-variant">
-              <li><Link to="/services#web" className="hover:text-primary-brand transition-colors">{t('services.web')}</Link></li>
-              <li><Link to="/services#mobile" className="hover:text-primary-brand transition-colors">{t('services.mobile')}</Link></li>
-              <li><Link to="/services#product" className="hover:text-primary-brand transition-colors">{t('services.product')}</Link></li>
-              <li><Link to="/services#graphic" className="hover:text-primary-brand transition-colors">{t('services.graphic')}</Link></li>
-            </ul>
-          </div>
-          <div>
-            <h6 className="text-sm font-bold uppercase tracking-wider mb-6 text-on-surface">Legal</h6>
-            <ul className="space-y-4 text-sm text-on-surface-variant">
-              <li><Link to="/privacy" className="hover:text-primary-brand transition-colors">Privacy</Link></li>
-              <li><Link to="/terms" className="hover:text-primary-brand transition-colors">Terms</Link></li>
-            </ul>
+        <div className="pt-12 border-t border-slate-100 flex flex-col md:flex-row justify-between items-center gap-6">
+          <p className="text-slate-400 text-sm italic">
+            © 2026 - SolvingTech Digital Asia
+          </p>
+          <div className="flex items-center gap-8 text-xs font-bold uppercase tracking-widest text-slate-300">
+             <span>Innovation</span>
+             <span>Precision</span>
+             <span>Growth</span>
           </div>
         </div>
-      </div>
-      <div className="max-w-7xl mx-auto px-8 py-8 border-t border-slate-200 flex flex-col sm:flex-row justify-between items-center gap-4 text-sm text-on-surface-variant">
-        <p>© 2024 SolvingTech. Forward-Thinking Precision.</p>
-        <p>{t('footer.unit')}</p>
       </div>
     </footer>
   );
 };
 
-export default function Layout({ children }: { children: React.ReactNode }) {
+export default function Layout({ children }: { children: ReactNode }) {
   const handleWA = () => {
     window.open('https://wa.me/6281234567890?text=Halo%20saya%20mau%20konsultasi', '_blank');
   };

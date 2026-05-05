@@ -39,36 +39,49 @@ export default function Blog() {
     <div className="pt-32 pb-24">
       <section className="max-w-7xl mx-auto px-6 mb-24">
         <div className="flex flex-col lg:flex-row gap-12 items-center">
-          <div className="flex-1 space-y-6">
-            <span className="inline-block px-3 py-1 rounded-full bg-primary-brand/10 text-primary-brand text-label-caps">
+          <motion.div 
+            initial={{ opacity: 0, x: -30 }}
+            whileInView={{ opacity: 1, x: 0 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, ease: [0.16, 1, 0.3, 1] }}
+            className="flex-1 space-y-6"
+          >
+            <span className="inline-block px-3 py-1 rounded-full bg-primary-brand/10 text-primary-brand text-label-caps font-bold">
               {t('blog.badge')}
             </span>
-            <h1 className="text-h1">{t('blog.title')}</h1>
-            <p className="text-body-lg text-on-surface-variant max-w-2xl">
+            <h1 className="text-5xl md:text-7xl font-black text-slate-900 leading-tight tracking-tighter">{t('blog.title')}</h1>
+            <p className="text-xl text-slate-500 max-w-2xl leading-relaxed font-medium">
               {t('blog.desc')}
             </p>
             <div className="flex items-center gap-6 pt-4">
-              <button className="px-8 py-4 bg-primary-brand text-white font-bold rounded-lg airy-shadow hover:opacity-90 transition-all active:scale-95 cursor-pointer">
+              <button className="px-8 py-5 bg-primary-brand text-white font-black rounded-2xl shadow-xl shadow-primary-brand/20 hover:opacity-90 transition-all active:scale-95 cursor-pointer">
                 {t('blog.cta')}
               </button>
-              <span className="text-on-surface-variant font-medium text-sm">{t('blog.readTime')}</span>
+              <span className="text-slate-400 font-bold uppercase tracking-widest text-xs">{t('blog.readTime')}</span>
             </div>
-          </div>
-          <div className="flex-1 w-full relative">
-            <div className="aspect-video rounded-xl overflow-hidden airy-shadow">
+          </motion.div>
+          <motion.div 
+            initial={{ opacity: 0, x: 30, scale: 0.9 }}
+            whileInView={{ opacity: 1, x: 0, scale: 1 }}
+            viewport={{ once: true }}
+            transition={{ duration: 0.8, delay: 0.2 }}
+            className="flex-1 w-full relative"
+          >
+            <div className="aspect-video rounded-[2.5rem] overflow-hidden shadow-2xl border-4 border-white">
               <img 
                 className="w-full h-full object-cover" 
                 src="https://images.unsplash.com/photo-1676299081847-824916de030a?auto=format&fit=crop&q=80&w=800" 
                 alt="AI brain core"
+                referrerPolicy="no-referrer"
               />
             </div>
-          </div>
+          </motion.div>
         </div>
       </section>
 
       <section className="max-w-7xl mx-auto px-6 mb-12">
         <div className="flex flex-wrap items-center gap-4 border-b border-slate-200 pb-6">
-          {[t('blog.cats.all'), "Engineering", "Design", "Insights", "Agile"].map((cat, i) => (
+          {[t('blog.cats.all'), t('blog.cats.tech'), t('blog.cats.design'), t('blog.cats.insights'), t('blog.cats.agile')].map((cat, i) => (
             <button 
               key={i} 
               className={`px-6 py-2 rounded-full font-semibold text-sm transition-all cursor-pointer ${i === 0 ? 'bg-primary-brand text-white' : 'border border-slate-200 text-on-surface-variant hover:border-primary-brand hover:text-primary-brand'}`}
@@ -94,6 +107,7 @@ export default function Blog() {
                   className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-700" 
                   src={post.img} 
                   alt={post.title} 
+                  referrerPolicy="no-referrer"
                 />
               </div>
               <div className="p-8 flex flex-col flex-grow">

@@ -1,29 +1,40 @@
 import React, { useState, useEffect } from 'react';
 import { motion, AnimatePresence } from 'motion/react';
 import { useLocation } from 'react-router-dom';
+import { useLanguage } from '../LanguageContext';
 
 export default function AnimatedTransition({ children }: { children: React.ReactNode }) {
   const location = useLocation();
+  const { language } = useLanguage();
   const [displayLocation, setDisplayLocation] = useState(location);
+  const [currentLanguage, setCurrentLanguage] = useState(language);
   const [isCovering, setIsCovering] = useState(false);
   const [pendingLocation, setPendingLocation] = useState<typeof location | null>(null);
 
   useEffect(() => {
-    if (location.pathname !== displayLocation.pathname) {
-      setPendingLocation(location);
+    // Check for pathname change OR language change
+    if (location.pathname !== displayLocation.pathname || language !== currentLanguage) {
+      if (location.pathname !== displayLocation.pathname) {
+        setPendingLocation(location);
+      }
       setIsCovering(true);
     }
-  }, [location, displayLocation.pathname]);
+  }, [location, displayLocation.pathname, language, currentLanguage]);
 
   const handleAnimationComplete = () => {
-    if (isCovering && pendingLocation) {
-      // Content is now covered, swap the underlying page
-      setDisplayLocation(pendingLocation);
+    if (isCovering) {
+      // If we had a pending route change, apply it
+      if (pendingLocation) {
+        setDisplayLocation(pendingLocation);
+        setPendingLocation(null);
+      }
+      
+      // Always sync the language state after covering is finished (before revealing)
+      setCurrentLanguage(language);
       
       // Short delay to ensure the content swap is processed before revealing
       setTimeout(() => {
         setIsCovering(false);
-        setPendingLocation(null);
       }, 50);
     }
   };
